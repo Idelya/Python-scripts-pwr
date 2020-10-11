@@ -1,16 +1,33 @@
-# This is a sample Python script.
+import trigonometric
+from typing import Callable
+from random import randint
+import math
+INT_APPROXIMATION = 50
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-
-
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+# Przyjęto, że użytkownik podaje argument w stopniach
 
 
-# Press the green button in the gutter to run the script.
+def randomize(fun: Callable[[float, int], float]) -> None:
+    for i in range(0, 10):
+        n = randint(1, 10)
+
+        text = "Dla argumentu {} {} {}."
+        print(text.format(n, 'sin', fun(n, INT_APPROXIMATION)))
+
+
+def run_app() -> None:
+    print('Zad 1')
+    degrees_x = float(input('Podaj dla ilu stopni chcesz policzyc sinus:'))
+    radian_x = math.radians(degrees_x)
+    print(trigonometric.sin(radian_x, INT_APPROXIMATION))
+    print('Random sin')
+    randomize(trigonometric.sin)
+    degrees_z = float(input('Podaj dla ilu stopni chcesz policzyc cosinus:'))
+    radian_z = math.radians(degrees_z)
+    print(trigonometric.cos(radian_z, INT_APPROXIMATION))
+    print('Random cos')
+    randomize(trigonometric.cos)
+
+
 if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    run_app()
