@@ -1,6 +1,16 @@
-from typing import List, Dict, Union
+from typing import List, Dict, Union, TypedDict
 
-students_arr: List[Dict[str, Union[str, str, str, str, int, float, str]]] = [{
+student_type = TypedDict("student_type", {
+    'imie': str,
+    'nazwisko': str,
+    'PESEL': str,
+    'plec': str,
+    'rok_studiow': int,
+    'srednia_ocen': float,
+    'kierunek_studiow': str,
+})
+
+students_arr: List[student_type] = [{
     'imie': 'Agata',
     'nazwisko': 'Walerczyk',
     'PESEL': '98031359375',
