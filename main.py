@@ -20,7 +20,7 @@ def add_person() -> None:
     elif int(option) in menu:
         name = input('Name:')
         surname = input('Surname:')
-        birthday = datetime.datetime.strptime(input('Birthday:'), '%Y-%m-%d').date()
+        birthday = datetime.datetime.strptime(input('Birthdate (yyyy-mm-dd):'), '%Y-%m-%d').date()
         pesel = input('Pesel:')
         faculty = input('Faculty:')
 
@@ -36,15 +36,16 @@ def add_student(name: str, surname: str, birthday: datetime.date, pesel: str, fa
 
     filtered_list = filter(lambda k: k.faculty == faculty, pwr_list)
     for lecturer in filtered_list:
-        lecturer.attach(stud)
+        if type(lecturer) is Lecturer:
+            lecturer.attach(stud)
 
     return stud
 
 
 def add_administration(name: str, surname: str, birthday: datetime.date, pesel: str, faculty: str) -> Administration:
-    empoyment_date = input("Date of employment:")
+    employment_date = input("Date of employment:")
     office = input("Office:")
-    return Administration(name, surname, birthday, pesel, faculty, empoyment_date, office)
+    return Administration(name, surname, birthday, pesel, faculty, employment_date, office)
 
 
 def add_lecturer(name: str, surname: str, birthday: datetime.date, pesel: str, faculty: str) -> Lecturer:
@@ -54,7 +55,7 @@ def add_lecturer(name: str, surname: str, birthday: datetime.date, pesel: str, f
 
     filtered_list = filter(lambda k: k.faculty == faculty, pwr_list)
     for stud in filtered_list:
-        lecturer.attach(stud)
+        if type(stud) is Student: lecturer.attach(stud)
     return lecturer
 
 
@@ -90,22 +91,25 @@ def find_by_pesel() -> Person:
         return person
 
 
-def to_remove(pesel: str) -> None:
-    filtered_list = filter(lambda k: k.pesel == pesel, pwr_list)
-    for person in filtered_list:
-        if type(person) is Student:
-            observable_list = filter(lambda k: k.faculty == person.faculty, pwr_list)
-            for lecturer in observable_list:
+def to_remove(person: Person) -> None:
+    if type(person) is Student:
+        observable_list = filter(lambda k: k.faculty == person.faculty, pwr_list)
+        for lecturer in observable_list:
+            if type(lecturer) is Lecturer:
                 lecturer.detach(person)
-        if type(person) is Lecturer:
-            observer_list = filter(lambda k: k.faculty == person.faculty, pwr_list)
-            for lecturer in observer_list:
-                person.detach(lecturer)
+    if type(person) is Lecturer:
+        observer_list = filter(lambda k: k.faculty == person.faculty, pwr_list)
+        for stud in observer_list:
+            if type(stud) is Student:
+                person.detach(stud)
 
 
 def remove_by_pesel() -> None:
     global pwr_list
-    filtered_list = find_by_pesel()
+    person = find_by_pesel()
+    person.print_data()
+    to_remove(person)
+    filtered_list = filter(lambda k: k.pesel != person.pesel, pwr_list)
     pwr_list = []
     for stud in filtered_list:
         pwr_list.append(stud)
@@ -128,13 +132,30 @@ def save_list() -> None:
 def fetch_data() -> None:
     file_name = input("File name:")
     try:
-        new_list = pickle.load(open(file_name + '.p', "rb"))
+        f = open(file_name + '.p', "rb")
+        new_list = pickle.load(f)
         for person in new_list:
+            add_observer(person)
             pwr_list.append(person)
+        f.close()
     except EOFError:
         print("File empty")
     except FileNotFoundError:
         print("File not found")
+
+
+def add_observer(person: Person) -> None:
+    observable_list = filter(lambda k: k.faculty == person.faculty, pwr_list)
+    if type(person) is Student:
+        for lecturer in observable_list:
+            if type(lecturer) is Lecturer:
+                print("Attach "+person.surname+" to "+lecturer.surname)
+                lecturer.attach(person)
+    elif type(person) is Lecturer:
+        for stud in observable_list:
+            if type(stud) is Student:
+                print("Attach " + stud.surname + " to " + person.surname)
+                person.attach(stud)
 
 
 def create_exam() -> None:
