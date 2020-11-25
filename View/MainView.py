@@ -11,10 +11,7 @@ class MainView(Tk):
         Tk.__init__(self, *args, **kwargs)
         self.storage = storage
         container = Frame(self)
-        container.pack(side="top", fill="both", expand=True)
-
-        container.grid_rowconfigure(0, weight=1)
-        container.grid_columnconfigure(0, weight=1)
+        container.pack()
 
         self.frames = {}
 
@@ -27,7 +24,7 @@ class MainView(Tk):
 
     def show_frame(self, cont):
         frame = self.frames[cont]
-        frame.tkraise()
+        frame.tkraise() # Raise this widget in the stacking order.
 
     def to_menu(self):
         self.show_frame(MenuView)

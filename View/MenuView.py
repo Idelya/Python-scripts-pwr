@@ -1,7 +1,7 @@
 from tkinter import *
 import os
 from PIL import ImageTk, Image
-from tkinter import filedialog, messagebox, simpledialog
+from tkinter import filedialog, simpledialog
 
 from View.AddMenuView import AddMenuView
 

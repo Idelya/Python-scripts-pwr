@@ -1,6 +1,5 @@
 from tkinter import *
 from tkcalendar import DateEntry
-from Controllers import *
 
 
 class AddStudentView(Frame):
