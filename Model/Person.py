@@ -24,3 +24,4 @@ class Person(ABC):
     def print_data(self):
         print('{0} {1}, pesel: {2}, age: {3}, faculty: {4}'.format(self.name, self.surname, self.pesel,
                                                                    str(self.get_age()), self.faculty))
+        return self.name + self.surname + ', pesel: ' + self.pesel + ", wiek" + str(self.get_age())

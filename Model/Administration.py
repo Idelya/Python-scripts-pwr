@@ -1,4 +1,4 @@
-from Employee import Employee
+from Model.Employee import Employee
 
 
 class Administration(Employee):
@@ -8,6 +8,7 @@ class Administration(Employee):
 
     def print_data(self):
         print("Administration")
-        super(Administration, self).print_data()
+        data = super(Administration, self).print_data()
         print("Office: ", self.office)
 
+        return data

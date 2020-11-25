@@ -1,208 +1,97 @@
+from tkinter import Tk
 from typing import Dict, Callable, List
-from Student import Student
-from Person import Person
-from Administration import Administration
-from Lecturer import Lecturer
+
+from Model.Student import Student
+from Model.Person import Person
+from Model.Administration import Administration
+from Model.Lecturer import Lecturer
 import pickle
 import datetime
 
-pwr_list: List[Person] = []
-pwr_list_helper: List[Person] = []
+from View.MainView import MainView
 
 
-def add_person() -> None:
-    for key in menuAdd:
-        print(key, '=>', menuAdd[key].__name__)
+class Storage:
+    pwr_list: List[Person] = []
+    pwr_list_helper: List[Person] = []
 
-    option = input('select from menu:')
-    if not option.isnumeric():
-        print('You have to pick a number.')
-    elif int(option) in menu:
-        name = input('Name:')
-        surname = input('Surname:')
-        birthday = datetime.datetime.strptime(input('Birthdate (yyyy-mm-dd):'), '%Y-%m-%d').date()
-        pesel = input('Pesel:')
-        faculty = input('Faculty:')
+    def add_student(self, name: str, surname: str, birthday: datetime.date, pesel: str, faculty: str, index: str) -> Student:
+        stud = Student(name, surname, birthday, pesel, faculty, index)
+        self.pwr_list.append(stud)
+        self.print_all()
 
-        new_person = menuAdd.get(int(option))(name, surname, birthday, pesel, faculty)
-        pwr_list.append(new_person)
-    else:
-        print('Option not found.')
+    def add_administration(self, name: str, surname: str, birthday: datetime.date, pesel: str, employment_date: datetime.date, office:str,
+                           faculty: str) -> Administration:
+        admin = Administration(name, surname, birthday, pesel, faculty, employment_date, office)
+        self.pwr_list.append(admin)
+        self.print_all()
 
+    def add_lecturer(self, name: str, surname: str, birthday: datetime.date, pesel: str, faculty: str, empoyment_date: datetime.date,
+                     department: str) -> Lecturer:
+        lecturer = Lecturer(name, surname, birthday, pesel, faculty, empoyment_date, department)
+        self.pwr_list.append(lecturer)
+        self.print_all()
 
-def add_student(name: str, surname: str, birthday: datetime.date, pesel: str, faculty: str) -> Student:
-    index = input('Index:')
-    stud = Student(name, surname, birthday, pesel, faculty, index)
+    def print_all(self) -> None:
+        for person in self.pwr_list:
+            person.print_data()
 
-    filtered_list = filter(lambda k: k.faculty == faculty, pwr_list)
-    for lecturer in filtered_list:
-        if type(lecturer) is Lecturer:
-            lecturer.attach(stud)
+    def print_helper(self) -> None:
+        for person in self.pwr_list_helper:
+            person.print_data()
 
-    return stud
+    def sort_by_age(self) -> None:
+        self.pwr_list.sort(key=lambda k: k.get_age())
+        self.print_all()
 
+    def sort_by_surname(self) -> None:
+        self.pwr_list.sort(key=lambda k: k.surname)
+        self.print_all()
 
-def add_administration(name: str, surname: str, birthday: datetime.date, pesel: str, faculty: str) -> Administration:
-    employment_date = input("Date of employment:")
-    office = input("Office:")
-    return Administration(name, surname, birthday, pesel, faculty, employment_date, office)
-
-
-def add_lecturer(name: str, surname: str, birthday: datetime.date, pesel: str, faculty: str) -> Lecturer:
-    empoyment_date = input("Date of employment:")
-    department = input("Department:")
-    lecturer = Lecturer(name, surname, birthday, pesel, faculty, empoyment_date, department)
-
-    filtered_list = filter(lambda k: k.faculty == faculty, pwr_list)
-    for stud in filtered_list:
-        if type(stud) is Student: lecturer.attach(stud)
-    return lecturer
-
-
-def print_all() -> None:
-    for person in pwr_list:
+    def find_by_pesel_and_print(self, pesel) -> None:
+        person = self.find_by_pesel(pesel)
         person.print_data()
 
+    def find_by_pesel(self, pesel) -> Person:
+        filtered_list = filter(lambda k: k.pesel == pesel, self.pwr_list)
+        for person in filtered_list:
+            return person
 
-def print_helper() -> None:
-    for person in pwr_list_helper:
+    def remove_by_pesel(self, pesel) -> None:
+        person = self.find_by_pesel(pesel)
         person.print_data()
+        filtered_list = filter(lambda k: k.pesel != person.pesel, self.pwr_list)
+        self.pwr_list = []
+        for stud in filtered_list:
+            self.pwr_list.append(stud)
 
+    def copy_by_age(self, max_age) -> None:
+        self.pwr_list_helper.clear()
+        filtered_list = filter(lambda k: k.get_age() <= max_age, self.pwr_list)
+        for stud in filtered_list:
+            self.pwr_list_helper.append(stud)
+        self.print_helper()
 
-def sort_by_age() -> None:
-    pwr_list.sort(key=lambda k: k.get_age())
-    print_all()
+    def save_list(self, file_name) -> None:
+        pickle.dump(self.pwr_list, open(file_name + '.p', "wb"))
 
-
-def sort_by_surname() -> None:
-    pwr_list.sort(key=lambda k: k.surname)
-    print_all()
-
-
-def find_by_pesel_and_print() -> None:
-    person = find_by_pesel()
-    person.print_data()
-
-
-def find_by_pesel() -> Person:
-    pesel = input('Podaj pesel:')
-    filtered_list = filter(lambda k: k.pesel == pesel, pwr_list)
-    for person in filtered_list:
-        return person
-
-
-def to_remove(person: Person) -> None:
-    if type(person) is Student:
-        observable_list = filter(lambda k: k.faculty == person.faculty, pwr_list)
-        for lecturer in observable_list:
-            if type(lecturer) is Lecturer:
-                lecturer.detach(person)
-    if type(person) is Lecturer:
-        observer_list = filter(lambda k: k.faculty == person.faculty, pwr_list)
-        for stud in observer_list:
-            if type(stud) is Student:
-                person.detach(stud)
-
-
-def remove_by_pesel() -> None:
-    global pwr_list
-    person = find_by_pesel()
-    person.print_data()
-    to_remove(person)
-    filtered_list = filter(lambda k: k.pesel != person.pesel, pwr_list)
-    pwr_list = []
-    for stud in filtered_list:
-        pwr_list.append(stud)
-
-
-def copy_by_age() -> None:
-    pwr_list_helper.clear()
-    max_age = float(input('Max. age: '))
-    filtered_list = filter(lambda k: k.get_age() <= max_age, pwr_list)
-    for stud in filtered_list:
-        pwr_list_helper.append(stud)
-    print_helper()
-
-
-def save_list() -> None:
-    file_name = input("File name:")
-    pickle.dump(pwr_list, open(file_name + '.p', "wb"))
-
-
-def fetch_data() -> None:
-    file_name = input("File name:")
-    try:
-        f = open(file_name + '.p', "rb")
-        new_list = pickle.load(f)
-        for person in new_list:
-            add_observer(person)
-            pwr_list.append(person)
-        f.close()
-    except EOFError:
-        print("File empty")
-    except FileNotFoundError:
-        print("File not found")
-
-
-def add_observer(person: Person) -> None:
-    observable_list = filter(lambda k: k.faculty == person.faculty, pwr_list)
-    if type(person) is Student:
-        for lecturer in observable_list:
-            if type(lecturer) is Lecturer:
-                print("Attach "+person.surname+" to "+lecturer.surname)
-                lecturer.attach(person)
-    elif type(person) is Lecturer:
-        for stud in observable_list:
-            if type(stud) is Student:
-                print("Attach " + stud.surname + " to " + person.surname)
-                person.attach(stud)
-
-
-def create_exam() -> None:
-    lecturer = find_by_pesel()
-    if type(lecturer) is Lecturer:
-        lecturer.set_examine_date()
-    else:
-        print("Wrong pesel")
-
-
-def exit_menu() -> None:
-    quit()
-
-
-menuAdd: Dict[int, Callable[[], Person]] = {
-    0: add_student,
-    1: add_administration,
-    2: add_lecturer,
-}
-
-menu: Dict[int, Callable[[], None]] = {
-    0: add_person,
-    1: print_all,
-    2: sort_by_age,
-    3: sort_by_surname,
-    4: find_by_pesel_and_print,
-    5: remove_by_pesel,
-    6: copy_by_age,
-    7: print_helper,
-    8: save_list,
-    9: fetch_data,
-    10: create_exam,
-    11: exit_menu,
-}
+    def fetch_data(self, file_name) -> None:
+        try:
+            f = open(file_name, "rb")
+            new_list = pickle.load(f)
+            for person in new_list:
+                self.pwr_list.append(person)
+            f.close()
+        except EOFError:
+            print("File empty")
+        except FileNotFoundError:
+            print("File not found")
 
 
 def run_app() -> None:
-    while True:
-        for key in menu:
-            print(key, '=>', menu[key].__name__)
-        option = input('select from menu:')
-        if not option.isnumeric():
-            print('You have to pick a number.')
-        elif int(option) in menu:
-            menu.get(int(option))()
-        else:
-            print('Option not found. Please, pick again.')
+    storage = Storage()
+    app = MainView(storage)
+    app.mainloop()
 
 
 if __name__ == '__main__':

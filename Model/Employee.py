@@ -1,4 +1,4 @@
-from Person import Person
+from Model.Person import Person
 from abc import ABC
 
 
@@ -10,6 +10,8 @@ class Employee(Person):
         super().__init__(name, surname, birthdate, pesel, faculty)
 
     def print_data(self):
-        super(Employee, self).print_data()
+        data = super(Employee, self).print_data()
         print(self.employment_date)
 
+
+        return data
