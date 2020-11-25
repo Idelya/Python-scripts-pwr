@@ -56,13 +56,12 @@ class AddStudentView(Frame):
         entryIndex.grid(row=6, column=1)
 
         buttonConfirm = Button(self, text="Potwierdz", fg='white', bg='#003f00', height=2, width=15,
-                               command=lambda: self.add_student())
+                               command=lambda: self.storage.log_wrapper(self.add_student))
 
         buttonConfirm.grid(row=7, column=1, padx=10, pady=5)
 
     def add_student(self):
-        print('add_student')
-        self.storage.add_student(
+        stud = self.storage.add_student(
             self.entryName.get(),
             self.entrySurname.get(),
             self.birthdayCal.get_date(),
@@ -71,6 +70,7 @@ class AddStudentView(Frame):
             self.entryIndex.get())
 
         self.viewController.to_menu()
+        return 'Student: ' + stud.get_full_name()
 
 
 class AddAdministrationView(Frame):
@@ -135,12 +135,12 @@ class AddAdministrationView(Frame):
         entryOffice.grid(row=7, column=1)
 
         buttonConfirm = Button(self, text="Potwierdz", fg='white', bg='#003f00', height=2, width=15,
-                               command=lambda: self.add_administration())
+                               command=lambda: self.storage.log_wrapper(self.add_administration))
 
         buttonConfirm.grid(row=8, column=1, padx=10, pady=5)
 
     def add_administration(self):
-        self.storage.add_administration(
+        admin = self.storage.add_administration(
             self.entryName.get(),
             self.entrySurname.get(),
             self.birthdayCal.get_date(),
@@ -150,6 +150,8 @@ class AddAdministrationView(Frame):
             self.entryOffice.get())
 
         self.viewController.to_menu()
+
+        return "Administration: " + admin.get_full_name()
 
 class AddLecturerView(Frame):
     def __init__(self, parent, viewController, storage):
@@ -212,12 +214,12 @@ class AddLecturerView(Frame):
         entryDepartment.grid(row=7, column=1)
 
         buttonConfirm = Button(self, text="Potwierdz", fg='white', bg='#003f00', height=2, width=15,
-                               command=lambda: self.add_lecturer())
+                               command=lambda: self.storage.log_wrapper(self.add_lecturer))
 
         buttonConfirm.grid(row=8, column=1, padx=10, pady=5)
 
     def add_lecturer(self):
-        self.storage.add_lecturer(
+        lec = self.storage.add_lecturer(
             self.entryName.get(),
             self.entrySurname.get(),
             self.birthdayCal.get_date(),
@@ -227,3 +229,4 @@ class AddLecturerView(Frame):
             self.entryDepartment.get())
 
         self.viewController.to_menu()
+        return "Lecturer: " + lec.get_full_name()

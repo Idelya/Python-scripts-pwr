@@ -14,23 +14,27 @@ from View.MainView import MainView
 class Storage:
     pwr_list: List[Person] = []
     pwr_list_helper: List[Person] = []
+    logs = []
 
     def add_student(self, name: str, surname: str, birthday: datetime.date, pesel: str, faculty: str, index: str) -> Student:
         stud = Student(name, surname, birthday, pesel, faculty, index)
         self.pwr_list.append(stud)
         self.print_all()
+        return stud
 
     def add_administration(self, name: str, surname: str, birthday: datetime.date, pesel: str, employment_date: datetime.date, office:str,
                            faculty: str) -> Administration:
         admin = Administration(name, surname, birthday, pesel, faculty, employment_date, office)
         self.pwr_list.append(admin)
         self.print_all()
+        return admin
 
     def add_lecturer(self, name: str, surname: str, birthday: datetime.date, pesel: str, faculty: str, empoyment_date: datetime.date,
                      department: str) -> Lecturer:
         lecturer = Lecturer(name, surname, birthday, pesel, faculty, empoyment_date, department)
         self.pwr_list.append(lecturer)
         self.print_all()
+        return lecturer
 
     def print_all(self) -> None:
         for person in self.pwr_list:
@@ -86,6 +90,21 @@ class Storage:
             print("File empty")
         except FileNotFoundError:
             print("File not found")
+
+    def log_wrapper(self, f):
+        now = str(datetime.datetime.now())
+        log = now +" " + f.__name__
+        res = f()
+        if res is not None:
+            log += " " + res
+        self.logs.append(log)
+        print(log)
+
+    def save_logs(self, filename):
+        file = open(filename, 'w')
+        for log in self.logs:
+            file.write(log +'\n')
+        file.close()
 
 
 def run_app() -> None:

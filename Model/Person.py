@@ -25,3 +25,6 @@ class Person(ABC):
         print('{0} {1}, pesel: {2}, age: {3}, faculty: {4}'.format(self.name, self.surname, self.pesel,
                                                                    str(self.get_age()), self.faculty))
         return self.name + self.surname + ', pesel: ' + self.pesel + ", wiek" + str(self.get_age())
+
+    def get_full_name(self):
+        return self.name+" "+self.surname
