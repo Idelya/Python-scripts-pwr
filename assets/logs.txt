@@ -1,4 +1,3 @@
-2020-11-25 11:36:58.430723 import_list
-2020-11-25 11:37:24.551448 add_lecturer Lecturer: Roman Tarcz
-2020-11-25 11:37:32.739175 sort_by_surname
-2020-11-25 11:37:39.997360 sort_by_age
+2020-11-25 13:57:40.925832 import_list
+2020-11-25 13:58:32.397002 add_student Student: Ala Kos
+2020-11-25 13:58:59.694935 remove
