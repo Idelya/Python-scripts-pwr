@@ -59,7 +59,7 @@ class AddStudentView(Addform):
         entryIndex.grid(row=6, column=1)
 
         buttonConfirm = Button(self, text="Potwierdz", fg='white', bg='#003f00', height=2, width=15,
-                               command=lambda: self.storage.log_wrapper(self.add_student))
+                               command=lambda: self.add_student())
 
         buttonConfirm.grid(row=7, column=1, padx=10, pady=5)
 
@@ -73,7 +73,6 @@ class AddStudentView(Addform):
             self.entryIndex.get())
 
         self.viewController.to_menu()
-        return 'Student: ' + stud.get_full_name()
 
 
 class AddAdministrationView(Addform):
@@ -100,7 +99,7 @@ class AddAdministrationView(Addform):
         entryOffice.grid(row=7, column=1)
 
         buttonConfirm = Button(self, text="Potwierdz", fg='white', bg='#003f00', height=2, width=15,
-                               command=lambda: self.storage.log_wrapper(self.add_administration))
+                               command=lambda: self.add_administration())
 
         buttonConfirm.grid(row=8, column=1, padx=10, pady=5)
 
@@ -116,7 +115,6 @@ class AddAdministrationView(Addform):
 
         self.viewController.to_menu()
 
-        return "Administration: " + admin.get_full_name()
 
 class AddLecturerView(Addform):
     def __init__(self, parent, viewController, storage):
@@ -141,7 +139,7 @@ class AddLecturerView(Addform):
         entryDepartment.grid(row=7, column=1)
 
         buttonConfirm = Button(self, text="Potwierdz", fg='white', bg='#003f00', height=2, width=15,
-                               command=lambda: self.storage.log_wrapper(self.add_lecturer))
+                               command=lambda: self.add_lecturer())
 
         buttonConfirm.grid(row=8, column=1, padx=10, pady=5)
 
@@ -156,4 +154,3 @@ class AddLecturerView(Addform):
             self.entryDepartment.get())
 
         self.viewController.to_menu()
-        return "Lecturer: " + lec.get_full_name()
